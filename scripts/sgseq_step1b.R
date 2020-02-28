@@ -37,20 +37,21 @@ if(file.exists(sample.info.file)) {
    sample.info <- getBamInfo(sample.tab, cores = nCores , yieldSize = 10000 ) 
    
 
-   logFiles <- gsub("_unique.bam", "Log.final.out", sample.tab$file_bam )
+  #logFiles <- gsub("_unique.bam", "Log.final.out", sample.tab$file_bam )
 
-  getLibSize <- function(logFile){
-    stopifnot(file.exists(logFile))
-    log <- readLines(logFile)
-    unique <- log[ grepl("Uniquely mapped reads number", log)]
-    multi <- log[ grepl("Number of reads mapped to multiple loci", log)]
+  #getLibSize <- function(logFile){
+  #  stopifnot(file.exists(logFile))
+  #  log <- readLines(logFile)
+  #  unique <- log[ grepl("Uniquely mapped reads number", log)]
+  #  multi <- log[ grepl("Number of reads mapped to multiple loci", log)]
 
-    num_unique <- str_trim( str_split_fixed( unique, "\\|\t", 2)[,2] )
-    num_multi <- str_trim( str_split_fixed( multi, "\\|\t", 2)[,2] )
-    libSize <- as.numeric(num_unique) + as.numeric(num_multi)
-    return(libSize)
-  }
-  sample.info$lib_size <- sapply(logFiles, FUN = getLibSize)
+  #  num_unique <- str_trim( str_split_fixed( unique, "\\|\t", 2)[,2] )
+  #  num_multi <- str_trim( str_split_fixed( multi, "\\|\t", 2)[,2] )
+  #  libSize <- as.numeric(num_unique) + as.numeric(num_multi)
+  #  return(libSize)
+  #}
+  sample.info$lib_size <- sample.tab$lib_size
+    #sapply(logFiles, FUN = getLibSize)
 
 
    save(sample.info, file = sample.info.file) 
