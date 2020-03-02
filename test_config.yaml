@@ -1,0 +1,6 @@
+# SGSeq pipeline
+dataCode: "test"
+metadata: "test/test_sgseq_support.tsv"
+inFolder: "test/input/"
+outFolder: "test/output/"
+region: "chr20:63398208-63474655"
