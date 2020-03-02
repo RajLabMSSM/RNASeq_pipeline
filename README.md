@@ -17,5 +17,5 @@ Requirements:
 * A submission file (see examples)
 
 
-
+Currently set up for running on individual loci using the `region` string in config.yaml
 

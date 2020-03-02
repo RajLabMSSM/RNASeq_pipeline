@@ -5,6 +5,7 @@ import os
 # SGSeq-pipeline
 shell.prefix("ml samtools; ml R/3.6.0; ") # change if you're on a different HPC
 
+hg38_index = "/sc/orga/projects/ad-omics/data/references//hg38_reference/SGSeq/hg38.sgseqAnno.Rdata"
 gtf = "/sc/orga/projects/ad-omics/data/references//hg38_reference/GENCODE/gencode.v30.annotation.gtf" # GENCODE V30 or whatever you have lying around
 annotation = "data/gencode_v30.ensemblid_gene_name.tsv.gz"  # will have to reverse engineer - I think just matches EnsemblIDs  to gene names
 
@@ -40,6 +41,7 @@ print(condition_strings)
 
 rule all:
     input:
+        hg38_index, 
         expand(outFolder + "{comparison}/" + dataCode + "_{comparison}_splice_variant_table_sig.tab", comparison = condition_strings)
 
 # symlink bams to rename by sample name
@@ -94,7 +96,7 @@ rule step0:
     input:
         gtf = gtf
     output:
-        "indexes/hg38.sgseqAnno.Rdata"
+        hg38_index
     params:
         script = "scripts/sgseq_step0.R"
     shell:
