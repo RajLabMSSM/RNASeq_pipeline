@@ -1,0 +1,7 @@
+sample_name	file_bam	condition	condition2
+control_scramble_1	test/data/control_scramble_1_unique_kcnq2.bam	control	control
+control_scramble_2	test/data/control_scramble_2_unique_kcnq2.bam	control	NA
+control_scramble_3	test/data/control_scramble_3_unique_kcnq2.bam	control	control
+TDP43_knockdown_1	test/data/TDP43_knockdown_1_unique_kcnq2.bam	TDP43	NA
+TDP43_knockdown_2	test/data/TDP43_knockdown_2_unique_kcnq2.bam	TDP43	extraCond
+TDP43_knockdown_3	test/data/TDP43_knockdown_3_unique_kcnq2.bam	TDP43	extraCond
