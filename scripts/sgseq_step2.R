@@ -254,7 +254,7 @@ message("saving")
   save(res.clean, file =  res.clean.data) 
   write.table(res.clean, file = res.clean.fname, sep = "\t", row.names = FALSE)
   
-  source("/SAN/vyplab/HuRNASeq/RNASeq_pipeline/SGSeq/makePieChartsAllEvents.R")
+  source("scripts/makePieChartsAllEvents.R")
   
   try(
     makePieChart(sgseqRes = res.clean, title = paste0(code, "_", conditions.name), FDRlimit = 0.05, outFolder = condition.dir )

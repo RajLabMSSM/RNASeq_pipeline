@@ -30,15 +30,17 @@ condition_strings = []
 for cond in condition_col_names:
     cond_values = metadata[cond]
     cond_values = [x for x in cond_values if not pd.isna(x) ]
-    cond_string = "_".join(sorted(list(set(cond_values))))
+    cond_string = "_".join(sorted(list(set(cond_values)),key=str.lower))
     condition_strings.append(cond_string)
 
 print( " * SGSeq pipeline")
 print(" * %s comparisons to test" % len(condition_strings) )
 
+print(condition_strings)
+
 rule all:
     input:
-        expand(outFolder + "{comparison}/" + dataCode + "_{comparison}_sgseq_variant_type_table.tab", comparison = condition_strings)
+        expand(outFolder + "{comparison}/" + dataCode + "_{comparison}_splice_variant_table_sig.tab", comparison = condition_strings)
 
 # symlink bams to rename by sample name
 rule symlinkBAMs:
@@ -83,7 +85,7 @@ rule createSGSeq_support:
             for read in samfile:
                 ls += 1
             lib_sizes.append(ls)
-        metadata["file_bam"] = input[0]
+        metadata["file_bam"] = input
         metadata["lib_size"] = lib_sizes
         metadata.to_csv(output[0], sep = "\t", na_rep = "NA", index = False)    
 
@@ -120,7 +122,7 @@ rule step2b:
         sgseq_support = outFolder + dataCode + "_sgseq_region_support.tsv", 
         txf_novel = outFolder + dataCode + "_txf_novel.RData"
     output:
-        outFolder + "{comparison}/" + dataCode + "_{comparison}_res_clean_novel.tab"
+        expand(outFolder + "{comparison}/" + dataCode + "_{comparison}_res_clean_novel.tab", comparison = condition_strings)
     params:
         script = "scripts/sgseq_step2.R",
         code = dataCode
@@ -134,7 +136,7 @@ rule step3:
         sgseq_support = outFolder + dataCode + "_sgseq_region_support.tsv",
         step1b_output = outFolder + "{comparison}/" + dataCode + "_{comparison}_res_clean_novel.tab"
     output:
-        outFolder + "{comparison}/" + dataCode + "_{comparison}_sgseq_variant_type_table.tab"
+        outFolder + "{comparison}/" + dataCode + "_{comparison}_splice_variant_table_sig.tab"
     params:
         createVarTable = "scripts/createVariantTable.R",
         findCentralExons = "scripts/findCentralExons.R"
