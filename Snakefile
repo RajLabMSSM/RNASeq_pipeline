@@ -47,11 +47,14 @@ rule all:
 # symlink bams to rename by sample name
 rule symlinkBAMs:
     output:
-        expand( inFolder + "{sample}.bam", sample = samples)
+        bams = expand( inFolder + "{sample}.bam", sample = samples),
+        bais = expand( inFolder + "{sample}.bam.bai", sample = samples),
     run:
         for i in range(len(samples)):
-            os.symlink(os.path.abspath(bam_files[i]), output[i], target_is_directory = False, dir_fd = None)
-
+            os.symlink(os.path.abspath(bam_files[i]), output.bams[i], target_is_directory = False, dir_fd = None)
+            # if index exists then symlink that too
+            if os.path.isfile( os.path.abspath(bam_files[i] + ".bai") ):
+                os.symlink(os.path.abspath(bam_files[i] + ".bai"), output[i] + ".bai", target_is_directory = False, dir_fd = None)
 # index BAMs if not already
 rule indexBAMs:
     input:
@@ -81,11 +84,14 @@ rule createSGSeq_support:
         outFolder + dataCode + "_sgseq_region_support.tsv"
     run:
         lib_sizes = []
-        for bam in metadata["file_bam"]:
-            ls = 0
-            samfile = pysam.AlignmentFile(bam, "rb")
-            for read in samfile:
-                ls += 1
+        for bam in input: #metadata["file_bam"]:
+            # pysam is crazy slow. Make a system call to samtools instead
+            #ls = 0
+            #samfile = pysam.AlignmentFile(bam, "rb")
+            #for read in samfile:
+            #    ls += 1
+            print(bam)
+            ls = subprocess.check_output("ml samtools; samtools view " + bam + " | wc -l ", shell = True).decode("utf-8").strip()
             lib_sizes.append(ls)
         metadata["file_bam"] = input
         metadata["lib_size"] = lib_sizes
@@ -108,7 +114,7 @@ rule step1b:
     input:
         sgseq_support = outFolder + dataCode + "_sgseq_region_support.tsv",
         bams = expand( inFolder + "{sample}_subset.bam" , sample = samples ),
-        sgseqAnno = "indexes/hg38.sgseqAnno.Rdata"
+        sgseqAnno = hg38_index
     params:
         script = "scripts/sgseq_step1b.R"
     output:

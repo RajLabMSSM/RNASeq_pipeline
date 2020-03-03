@@ -100,6 +100,9 @@ for (condition in list.conditions) {
   conditions <- support[, condition]
   # remove NA values and find unique
   conditions <- unique(conditions[!is.na(conditions)])
+  # get alphabetical order
+  conditions <- conditions[order(conditions)]
+   
   conditions.name <- paste(conditions, collapse="_")
    
   # make condition specific outputs
@@ -121,6 +124,7 @@ for (condition in list.conditions) {
    message("step needs to be either 2a for known variants or 2b for novel variants") 
   }  
   message('Condition ', condition)
+  message( conditions.name)
   support.loc <- support
 
   
